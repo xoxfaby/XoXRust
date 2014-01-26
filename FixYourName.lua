@@ -11,23 +11,44 @@ function PLUGIN:Init()
 		print("Creating default FixYourName config")
 	end
 	
+	self.Config.Language = loadLocalization(self.Config.Language)
+end
+
+function loadLocalization(setting)
+
+	LocalTxt = {}
 	
-	oxmin_Plugin = plugins.Find("oxmin")
-    if not oxmin_Plugin or not oxmin then
-        print( "Flag cantakename not added! Requires Oxmin" )
-        return;
-    end;
-	self.FLAG_CANTAKENAME = oxmin.AddFlag( "cantakename" )
-	print( "Flag cantakename successfully added" )
+	LocalTxt["english"] = {}
+	LocalTxt["english"].kickChatColor = " has been kicked ( Color code ) "
+	LocalTxt["english"].kickNoticeColor = "Kicked: Color code"
+	LocalTxt["english"].kickChatCharacter = " has been kicked ( Name already in use  "
+	LocalTxt["english"].kickNoticeCharacter = "Kicked: Name already in use"
+	LocalTxt["english"].kickChatDuplicate = " has been kicked ( Name contains illegal character ) "
+	LocalTxt["english"].kickNoticeDuplicate = "Kicked: Name contains illegal character"
+	
+	LocalTxt.Allowed = { "english" }
+	
+	local validLanguage = false
+	for k,v in ipairs(LocalTxt.Allowed) do
+		if v == setting:lower() then validLanguage = true end
+	end
+	if not validLanguage then
+		print("Language not valid, defaulting to English.")
+		return "english"
+	else 
+		return setting
+	end
 end
 
 function PLUGIN:LoadDefaultConfig()
+	self.Config.Language = "English"
 	self.Config.Characters = "abcdefghijklmnopqrstuvwxyz1234567890 [](){}!@#$%^&*_-=+.|"
 	self.Config.ReportToChat = true
 	self.Config.AllowColorCodes = false
 	self.Config.AllowDuplicateNames = false
 	self.Config.AllowDuplicateNamesCaseSensitive = true
 	self.Config.AllowBannedCharacters = false
+	self.Config.Language = "English"
 end
 
 function isNumCode( num )
@@ -77,22 +98,16 @@ function PLUGIN:OnUserConnect( netuser )
 	end
 	
 	if nameColor then
-		rust.Notice( netuser, "Kicked: Color code")
-		if self.Config.ReportToChat then rust.BroadcastChat( name .. " has been kicked ( Color code ) " ) end
+		rust.Notice( netuser, LocalTxt[self.Config.Language:lower()].kickNoticeColor )
+		if self.Config.ReportToChat then rust.BroadcastChat( name .. LocalTxt[self.Config.Language:lower()].kickChatColor ) end
 		netuser:Kick( NetError.Facepunch_Kick_RCON, true )
 	elseif nameDuplicate then
-		if oxminPlugin:HasFlag( netuser, self.FLAG_CANTAKENAME ) or oxminPlugin:HasFlag( netuser, oxmin.strtoflag["cankick"] ) or oxminPlugin:HasFlag( netuser, oxmin.strtoflag["canban"] ) then
-			rust.Notice( duplicateUser, "Kicked: Name has been claimed" )
-			if self.Config.ReportToChat then rust.BroadcastChat( duplicateUser.displayName .. " has been kicked ( Name has been claimed ) " ) end
-			duplicateUser:Kick( NetError.Facepunch_Kick_RCON, true )
-		else
-			rust.Notice( netuser, "Kicked: Name already in use" )
-			if self.Config.ReportToChat then rust.BroadcastChat( name .. " has been kicked ( Name already in use ) " ) end
-			netuser:Kick( NetError.Facepunch_Kick_RCON, true )
-		end
+		rust.Notice( netuser, LocalTxt[self.Config.Language:lower()].kickNoticeDuplicate )
+		if self.Config.ReportToChat then rust.BroadcastChat( name .. LocalTxt[self.Config.Language:lower()].kickChatDuplicate ) end
+		netuser:Kick( NetError.Facepunch_Kick_RCON, true )
 	elseif nameChar then
-		rust.Notice( netuser, "Kicked: Name contains illegal character" )
-		if self.Config.ReportToChat then rust.BroadcastChat( name .. " has been kicked ( Name contains illegal character ) " ) end
+		rust.Notice( netuser, LocalTxt[self.Config.Language:lower()].kickNoticeCharacter )
+		if self.Config.ReportToChat then rust.BroadcastChat( name .. LocalTxt[self.Config.Language:lower()].kickChatCharacter) end
 		netuser:Kick( NetError.Facepunch_Kick_RCON, true )
 	end
 end
