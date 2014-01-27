@@ -5,12 +5,8 @@ PLUGIN.Author = "XoXFaby"
 function PLUGIN:Init()
 	local b, res = config.Read( "FixYourName" )
 	self.Config = res or {}
-	if (not b) then
-		self:LoadDefaultConfig()
-		if (res) then config.Save( "FixYourName" ) end
-		print("Creating default FixYourName config")
-	end
-	
+	self:LoadDefaultConfig()
+	config.Save( "FixYourName" )	
 	self.Config.Language = loadLocalization(self.Config.Language)
 end
 
@@ -24,9 +20,18 @@ function loadLocalization(setting)
 	LocalTxt["english"].kickChatCharacter = " has been kicked ( Name already in use  "
 	LocalTxt["english"].kickNoticeCharacter = "Kicked: Name already in use"
 	LocalTxt["english"].kickChatDuplicate = " has been kicked ( Name contains illegal character ) "
-	LocalTxt["english"].kickNoticeDuplicate = "Kicked: Name contains illegal character"
+	LocalTxt["english"].kickNoticeDuplicate = "Kicked: Name contains illegal character"	
 	
-	LocalTxt.Allowed = { "english" }
+	LocalTxt["german"] = {}
+	LocalTxt["german"].kickChatColor = " wurde gekickt ( Farb-code ) "
+	LocalTxt["german"].kickNoticeColor = "Gekickt: Farb-code"
+	LocalTxt["german"].kickChatCharacter = " wurde gekickt ( Name wird schon verwendet )  "
+	LocalTxt["german"].kickNoticeCharacter = "Gekickt: Name wird schon verwendet "
+	LocalTxt["german"].kickChatDuplicate = " wurde gekickt ( Unerlaubtes symbol ) "
+	LocalTxt["german"].kickNoticeDuplicate = "Gekickt: Unerlaubtes symbol"
+	LocalTxt["deutsch"] = LocalTxt["german"]
+	
+	LocalTxt.Allowed = { "english", "german", "deutsch" }
 	
 	local validLanguage = false
 	for k,v in ipairs(LocalTxt.Allowed) do
@@ -41,14 +46,13 @@ function loadLocalization(setting)
 end
 
 function PLUGIN:LoadDefaultConfig()
-	self.Config.Language = "English"
-	self.Config.Characters = "abcdefghijklmnopqrstuvwxyz1234567890 [](){}!@#$%^&*_-=+.|"
-	self.Config.ReportToChat = true
-	self.Config.AllowColorCodes = false
-	self.Config.AllowDuplicateNames = false
-	self.Config.AllowDuplicateNamesCaseSensitive = true
-	self.Config.AllowBannedCharacters = false
-	self.Config.Language = "English"
+	self.Config.Language = self.Config.Language or "English"
+	self.Config.Characters = self.Config.Characters or "abcdefghijklmnopqrstuvwxyz1234567890 [](){}!@#$%^&*_-=+.|"
+	self.Config.ReportToChat = self.Config.Characters or true
+	self.Config.AllowColorCodes = self.Config.Characters or false
+	self.Config.AllowDuplicateNames = self.Config.Characters or false
+	self.Config.AllowDuplicateNamesCaseSensitive = self.Config.Characters or true
+	self.Config.AllowBannedCharacters = self.Config.Characters or false
 end
 
 function isNumCode( num )
