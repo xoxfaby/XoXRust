@@ -62,7 +62,15 @@ function loadLocalization(setting)
 	LocalTxt["pt-br"].kickChatCharacter = " foi kickado ( Nome contem caracteres ilegais ) "
 	LocalTxt["pt-br"].kickNoticeCharacter = "Kickado: Nome contem caracteres ilegais"
 	
-	LocalTxt.Allowed = { "english", "german", "deutsch", "dutch", "nederlands", "portuguese", "pt-br" }
+	LocalTxt["russian"] = {}
+	LocalTxt["russian"].kickChatColor = " был отключён (цветной ник)"
+	LocalTxt["russian"].kickNoticeColor = "Отказано в подключении: цветной ник"
+	LocalTxt["russian"].kickChatDuplicate = " был отключён (имя уже используется)"
+	LocalTxt["russian"].kickNoticeDuplicate = "Отказано в подключении: имя уже используется"
+	LocalTxt["russian"].kickChatCharacter = " был отключён (имя содержит запрещённые символы) "
+	LocalTxt["russian"].kickNoticeCharacter = "Отказано в подключении: имя содержит запрещённые символы"
+	
+	LocalTxt.Allowed = { "english", "german", "deutsch", "dutch", "nederlands", "portuguese", "pt-br", "russian" }
 	
 	local validLanguage = false
 	for k,v in ipairs(LocalTxt.Allowed) do
